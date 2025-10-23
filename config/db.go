@@ -20,6 +20,7 @@ func ConnectDatabase() *gorm.DB {
 
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=require",
+		"aws-1-ap-south-1.pooler.supabase.com", // ✅ IPv4 주소 고
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASS"),
