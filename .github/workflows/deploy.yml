@@ -23,8 +23,8 @@ jobs:
 
       - name: 📦 Save Docker image as tar
         run: |
-          sudo chmod -R 777 .
           docker save mcp-auth-backend -o mcp-auth-backend.tar
+          sudo chmod 777 mcp-auth-backend.tar
 
       - name: 🚀 Copy Docker image to EC2
         uses: appleboy/scp-action@v0.1.7
