@@ -1,4 +1,4 @@
-name: Deploy to EC2 (mcp-auth-backend-go)
+name: 🚀 Auto Deploy to EC2 (Docker)
 
 on:
   push:
@@ -10,31 +10,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: ✅ Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+      - name: 🔑 Set up SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-      - name: Deploy via SSH
-        run: |
-          ssh -i ~/.ssh/id_ed25519 ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            cd ~/mcp-auth-backend-go || exit 1
-            git pull origin main
+      - name: 🧱 Build Docker image
+        run: docker build -t mcp-auth-backend .
 
-            echo "✅ Building Docker image..."
-            sudo docker build -t mcp-auth-backend .
+      - name: 📦 Save Docker image as tar
+        run: docker save mcp-auth-backend -o mcp-auth-backend.tar
 
-            echo "🚀 Restarting container..."
+      - name: 🚀 Copy Docker image to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "mcp-auth-backend.tar"
+          target: "~/"
+
+      - name: 🧩 Deploy on EC2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
             sudo docker rm -f mcp-auth || true
-            sudo docker run -d -p 8080:8080 --name mcp-auth \
-              -v $(pwd)/.env:/app/.env \
-              mcp-auth-backend
-
-            echo "✅ Deployment complete!"
-          EOF
-
+            sudo docker load -i ~/mcp-auth-backend.tar
+            sudo docker run -d -p 8080:8080 --name mcp-auth -v /home/ubuntu/mcp-auth-backend-go/.env:/app/.env mcp-auth-backend
