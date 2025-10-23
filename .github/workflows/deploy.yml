@@ -16,7 +16,7 @@ jobs:
       - name: 🔑 Set up SSH
         uses: webfactory/ssh-agent@v0.7.0
         with:
-          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+          ssh-private-key: ${{ secrets.EC2_KEY }}
 
       - name: 🧱 Build Docker image
         run: docker build -t mcp-auth-backend .
