@@ -37,7 +37,7 @@ jobs:
           overwrite: true
           debug: true
 
-      - name: 🧩 Deploy on EC2
+      - name: 🧩 Deploy on EC2.
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
