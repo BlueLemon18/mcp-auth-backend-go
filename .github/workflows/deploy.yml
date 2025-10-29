@@ -33,7 +33,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           source: "mcp-auth-backend.tar"
-          target: "/home/ubuntu/"
+          target: "~/"
           overwrite: true
           debug: true
 
