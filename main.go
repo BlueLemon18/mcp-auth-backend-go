@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	// ✅ 1. Gin 모드 설정 (개발용 → 릴리스 모드 전환)
+	// ✅ 1. Gin 모드 설정 (릴리스 모드 전환)
 	gin.SetMode(gin.ReleaseMode)
 
 	// ✅ 2. DB 연결 및 마이그레이션
