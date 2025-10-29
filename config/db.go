@@ -10,14 +10,16 @@ import (
 	"gorm.io/gorm"
 )
 
+// ✅ 서버 시작 시 /app/.env 로드
+func init() {
+	if err := godotenv.Load("/app/.env"); err != nil {
+		log.Fatalf("❌ Error loading .env file: %v", err)
+	}
+}
+
 var DB *gorm.DB
 
 func ConnectDatabase() *gorm.DB {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("❌ Error loading .env file")
-	}
-
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=require",
 		os.Getenv("DB_HOST"),
@@ -28,7 +30,7 @@ func ConnectDatabase() *gorm.DB {
 	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		DisableForeignKeyConstraintWhenMigrating: true, // ✅ FK 자동생성 끔
+		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 	if err != nil {
 		log.Fatalf("❌ Failed to connect database: %v", err)
