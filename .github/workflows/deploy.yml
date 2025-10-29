@@ -33,7 +33,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           source: "mcp-auth-backend.tar"
-          target: "~/"
+          target: "/home/ubuntu/"
 
       - name: 🧩 Deploy on EC2
         uses: appleboy/ssh-action@v1.0.0
